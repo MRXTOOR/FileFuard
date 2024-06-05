@@ -26,6 +26,10 @@ using System.Timers;
 using Volo.Abp.Data;
 using System.Windows.Forms.DataVisualization.Charting;
 using iTextSharp.text;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System;
+using System.IO;
 
 namespace FileFuardSetup
 {
@@ -629,8 +633,26 @@ namespace FileFuardSetup
 
 		private void OpenPDFgrafics_Click(object sender, EventArgs e)
 		{
+            string pdfFileName = $"{Environment.MachineName}_PDF_Report.pdf";
+            string pdfPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), pdfFileName);
+
             try
             {
+                // Создаем документ PDF
+                Document document = new Document();
+                PdfWriter.GetInstance(document, new FileStream(pdfPath, FileMode.Create));
+
+                // Добавляем шрифт для поддержки кириллицы
+                string arialFontPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf");
+                BaseFont baseFont = BaseFont.CreateFont(arialFontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+                iTextSharp.text.Font font = new iTextSharp.text.Font(baseFont, 12, 12); // Размер шрифта 12, нормальное начертание
+
+                document.Open();
+
+                // Добавляем заголовок с текущей датой
+                Paragraph header = new Paragraph($"Отчет от {DateTime.Now.ToString("dd.MM.yyyy")}", font);
+                document.Add(header);
+
                 // Получаем данные из базы данных
                 string selectQuery = "SELECT COUNT(*) AS Count, Vulnerability FROM ScanResults GROUP BY Vulnerability";
                 List<int> counts = new List<int>();
@@ -654,39 +676,66 @@ namespace FileFuardSetup
                 }
 
                 // Создаем диаграмму пирога
+                MemoryStream chartStream = new MemoryStream();
                 Chart chart = new Chart();
-                chart.Size = new Size(500, 300);
+                chart.Width = 500;
+                chart.Height = 300;
                 chart.Titles.Add("Соотношение зараженных и незараженных файлов");
                 chart.ChartAreas.Add(new ChartArea());
                 chart.Series.Add(new Series("Vulnerability"));
                 chart.Series["Vulnerability"].ChartType = SeriesChartType.Pie;
                 chart.Series["Vulnerability"].Points.DataBindXY(vulnerabilities, counts);
+                chart.SaveImage(chartStream, ChartImageFormat.Png);
 
-                // Создаем отчет
-                StringBuilder report = new StringBuilder();
-                report.AppendLine($"Отчет от {DateTime.Now.ToString("dd.MM.yyyy")}");
-                report.AppendLine();
-                report.AppendLine("Соотношение зараженных и незараженных файлов:");
-                report.AppendLine();
+                // Добавляем изображение диаграммы в документ PDF
+                iTextSharp.text.Image chartImage = iTextSharp.text.Image.GetInstance(chartStream.ToArray());
+                document.Add(chartImage);
 
-                foreach (DataPoint point in chart.Series["Vulnerability"].Points)
+                // Добавляем список файлов
+                Paragraph fileList = new Paragraph("Файлы, участвующие в статистике:");
+                document.Add(fileList);
+
+                // Получаем список файлов из базы данных
+                List<string> files = new List<string>();
+                selectQuery = "SELECT FilePath FROM ScanResults";
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    report.AppendLine($"{point.AxisLabel}: {point.YValues[0]}");
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(selectQuery, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                files.Add(reader.GetString(0));
+                            }
+                        }
+                    }
+                    connection.Close();
                 }
 
-                // Выводим отчет
-                MessageBox.Show(report.ToString(), "Отчет", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // Добавляем список файлов в документ
+                foreach (string file in files)
+                {
+                    document.Add(new Paragraph(file));
+                }
 
-                // Отображаем диаграмму
-                Form chartForm = new Form();
-                chartForm.Size = new Size(600, 400);
-                chart.Dock = DockStyle.Fill;
-                chartForm.Controls.Add(chart);
-                chartForm.ShowDialog();
+                // Закрываем документ
+                document.Close();
+
+                // Открываем созданный PDF-файл
+                if (File.Exists(pdfPath))
+                {
+                    DialogResult result = MessageBox.Show("PDF-файл успешно создан. Открыть файл?", "PDF-файл создан", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                    if (result == DialogResult.Yes)
+                    {
+                        System.Diagnostics.Process.Start(pdfPath);
+                    }
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при формировании отчета: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Ошибка при создании отчета: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
