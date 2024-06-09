@@ -51,7 +51,7 @@ namespace FileFuardSetup
 
 		private void OpenFile_Click(object sender, EventArgs e)
 		{
-			 OpenFileDialog openFileDialog = new OpenFileDialog
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "Word Documents|*.docx|PDF Files|*.pdf"
             };
@@ -64,13 +64,16 @@ namespace FileFuardSetup
                 if (fileExtension == ".docx" || fileExtension == ".pdf")
                 {
                     ScanFile(fileName);
+
+                    // Запуск мониторинга файла
+                    Task.Run(() => Monitor(Path.GetDirectoryName(fileName)));
                 }
                 else
                 {
                     MessageBox.Show("Выбранный файл не является поддерживаемым форматом (допускаются только .docx и .pdf)", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-		}
+        }
 
 
 		/// <summary>
@@ -367,18 +370,18 @@ namespace FileFuardSetup
 
 		private void Monitor(string directory)
 		{
-			Dictionary<string, DateTime> before = FilesToTimestamp(directory);
+            Dictionary<string, DateTime> before = FilesToTimestamp(directory);
 
-			while (true)
-			{
-				Thread.Sleep(1000);
-				Dictionary<string, DateTime> after = FilesToTimestamp(directory);
+            while (isMonitoringActive)
+            {
+                Thread.Sleep(1000);
+                Dictionary<string, DateTime> after = FilesToTimestamp(directory);
 
-				List<string> added = after.Keys.Except(before.Keys).ToList();
-				List<string> removed = before.Keys.Except(after.Keys).ToList();
-				List<string> modified = before.Keys.Where(f => after.ContainsKey(f) && after[f] != before[f]).ToList();
+                List<string> added = after.Keys.Except(before.Keys).ToList();
+                List<string> removed = before.Keys.Except(after.Keys).ToList();
+                List<string> modified = before.Keys.Where(f => after.ContainsKey(f) && after[f] != before[f]).ToList();
 
-				List<string> instances = new List<string>();
+                List<string> instances = new List<string>();
 				instances.AddRange(added.Where(f => f.EndsWith(".docx")));
 				instances.AddRange(modified.Where(f => f.EndsWith(".docx")));
 
@@ -645,12 +648,16 @@ namespace FileFuardSetup
                 // Добавляем шрифт для поддержки кириллицы
                 string arialFontPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf");
                 BaseFont baseFont = BaseFont.CreateFont(arialFontPath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-                iTextSharp.text.Font font = new iTextSharp.text.Font(baseFont, 12, 12); // Размер шрифта 12, нормальное начертание
+                iTextSharp.text.Font font = new iTextSharp.text.Font(baseFont, 12, iTextSharp.text.Font.NORMAL); // Размер шрифта 12, нормальное начертание
 
                 document.Open();
 
-                // Добавляем заголовок с текущей датой
-                Paragraph header = new Paragraph($"Отчет от {DateTime.Now.ToString("dd.MM.yyyy")}", font);
+                // Добавляем заголовок с текущей датой и временем, и зачеркнутый текст
+                Paragraph header = new Paragraph();
+                string dateTimeNow = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
+                Chunk chunk = new Chunk($"Отчет от {dateTimeNow}", font);
+                chunk.SetUnderline(0.5f, -1.5f); // Создаем зачеркнутый текст
+                header.Add(chunk);
                 document.Add(header);
 
                 // Получаем данные из базы данных
@@ -692,7 +699,7 @@ namespace FileFuardSetup
                 document.Add(chartImage);
 
                 // Добавляем список файлов
-                Paragraph fileList = new Paragraph("Файлы, участвующие в статистике:");
+                Paragraph fileList = new Paragraph("Файлы, участвующие в статистике:", font);
                 document.Add(fileList);
 
                 // Получаем список файлов из базы данных
@@ -717,8 +724,22 @@ namespace FileFuardSetup
                 // Добавляем список файлов в документ
                 foreach (string file in files)
                 {
-                    document.Add(new Paragraph(file));
+                    document.Add(new Paragraph(file, font));
                 }
+
+                // Добавляем изображение из рабочей директории проекта
+                string imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "PixelKit.jpg"); // Замените "image.png" на имя вашего файла изображения
+                if (File.Exists(imagePath))
+                {
+                    iTextSharp.text.Image projectImage = iTextSharp.text.Image.GetInstance(imagePath);
+                    projectImage.Alignment = Element.ALIGN_CENTER;
+                    document.Add(projectImage);
+                }
+
+                // Добавляем текст с информацией о программе и лицензии
+                Paragraph footer = new Paragraph("Данный файл отчета был создан и проверен программой FileGuard, разработанной в 2024 году и находится под защитой лицензионным соглашением GNU Affero General Public License v3.0.\n\nGNU Affero General Public License v3.0 (AGPL-3.0) — это лицензия, которая позволяет конечным пользователям свободно использовать, изменять и распространять программное обеспечение при условии, что любые изменения и дополнения также будут распространяться под той же лицензией.", font);
+                footer.Alignment = Element.ALIGN_CENTER;
+                document.Add(footer);
 
                 // Закрываем документ
                 document.Close();
@@ -788,10 +809,49 @@ namespace FileFuardSetup
 
         }
 
- 
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                int selectedId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value); // Индекс столбца с ID
 
+                try
+                {
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
 
+                        string selectQuery = "SELECT FilePath FROM ScanResults WHERE Id = @Id";
+                        SqlCommand selectCommand = new SqlCommand(selectQuery, connection);
+                        selectCommand.Parameters.AddWithValue("@Id", selectedId);
+                        string filePath = selectCommand.ExecuteScalar().ToString();
 
+                        // Остановка мониторинга для выбранного файла или папки
+                        StopMonitoring(filePath);
+
+                        connection.Close();
+
+                        MessageBox.Show("Мониторинг для выбранного файла или папки был успешно отключен.");
+
+                        // Дополнительно можно изменить цвет выбранной строки на синий
+                        dataGridView1.SelectedRows[0].DefaultCellStyle.BackColor = Color.Blue;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка при отключении мониторинга: " + ex.Message);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Пожалуйста, выберите запись для отключения мониторинга.");
+            }
+        }
+        private volatile bool isMonitoringActive = true;
+        private void StopMonitoring(string directory)
+        {
+            isMonitoringActive = false;
+        }
     }
 } 
 

@@ -23,5 +23,10 @@ namespace FileFuardSetup
             this.Hide();
             MainForm.ShowDialog();
         }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

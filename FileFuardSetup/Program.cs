@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileFuardSetup.Page;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace FileFuardSetup
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            Application.Run(new Autarishation());
         }
     }
 }

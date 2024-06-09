@@ -63,9 +63,29 @@ namespace FileFuardSetup.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap duvenhage_virus_bat_animal_corona_virus_outbreak_icon_140199 {
+            get {
+                object obj = ResourceManager.GetObject("duvenhage_virus_bat_animal_corona_virus_outbreak_icon_140199", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap PixelKit {
             get {
                 object obj = ResourceManager.GetObject("PixelKit", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap загрузка {
+            get {
+                object obj = ResourceManager.GetObject("загрузка", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

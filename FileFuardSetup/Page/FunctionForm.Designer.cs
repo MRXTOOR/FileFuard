@@ -47,11 +47,11 @@
             this.scanResultsBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.scanResultsTableAdapter = new FileFuardSetup.FileGuardDataSetTableAdapters.ScanResultsTableAdapter();
             this.fileGuardDataSetBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.idDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.scanResultsBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fileGuardDataSet2)).BeginInit();
@@ -62,9 +62,9 @@
             // 
             // OpenFile
             // 
-            this.OpenFile.Location = new System.Drawing.Point(539, 273);
+            this.OpenFile.Location = new System.Drawing.Point(645, 207);
             this.OpenFile.Name = "OpenFile";
-            this.OpenFile.Size = new System.Drawing.Size(100, 23);
+            this.OpenFile.Size = new System.Drawing.Size(131, 41);
             this.OpenFile.TabIndex = 0;
             this.OpenFile.Text = "Открыть файл";
             this.OpenFile.UseVisualStyleBackColor = true;
@@ -73,7 +73,7 @@
             // dataGridView1
             // 
             this.dataGridView1.AutoGenerateColumns = false;
-            this.dataGridView1.BackgroundColor = System.Drawing.Color.Lime;
+            this.dataGridView1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.idDataGridViewTextBoxColumn,
@@ -100,7 +100,7 @@
             // 
             // Reasercher
             // 
-            this.Reasercher.Location = new System.Drawing.Point(586, 12);
+            this.Reasercher.Location = new System.Drawing.Point(539, 86);
             this.Reasercher.Name = "Reasercher";
             this.Reasercher.Size = new System.Drawing.Size(100, 20);
             this.Reasercher.TabIndex = 2;
@@ -108,9 +108,9 @@
             // 
             // OpenPDFgrafics
             // 
-            this.OpenPDFgrafics.Location = new System.Drawing.Point(586, 38);
+            this.OpenPDFgrafics.Location = new System.Drawing.Point(539, 209);
             this.OpenPDFgrafics.Name = "OpenPDFgrafics";
-            this.OpenPDFgrafics.Size = new System.Drawing.Size(100, 23);
+            this.OpenPDFgrafics.Size = new System.Drawing.Size(100, 36);
             this.OpenPDFgrafics.TabIndex = 3;
             this.OpenPDFgrafics.Text = "Отчет";
             this.OpenPDFgrafics.UseVisualStyleBackColor = true;
@@ -120,7 +120,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.ForeColor = System.Drawing.Color.MediumTurquoise;
-            this.label1.Location = new System.Drawing.Point(692, 15);
+            this.label1.Location = new System.Drawing.Point(645, 93);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(39, 13);
             this.label1.TabIndex = 4;
@@ -130,7 +130,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.Color.Aquamarine;
-            this.label2.Location = new System.Drawing.Point(692, 48);
+            this.label2.Location = new System.Drawing.Point(546, 193);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(93, 13);
             this.label2.TabIndex = 5;
@@ -138,9 +138,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(645, 273);
+            this.button1.Location = new System.Drawing.Point(645, 12);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(131, 23);
+            this.button1.Size = new System.Drawing.Size(131, 41);
             this.button1.TabIndex = 6;
             this.button1.Text = "Вернуться в главное меню";
             this.button1.UseVisualStyleBackColor = true;
@@ -148,7 +148,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(539, 225);
+            this.button2.Location = new System.Drawing.Point(539, 254);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(100, 42);
             this.button2.TabIndex = 7;
@@ -158,12 +158,13 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(645, 225);
+            this.button3.Location = new System.Drawing.Point(645, 254);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(131, 42);
             this.button3.TabIndex = 8;
             this.button3.Text = "Добавить в исключение";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // scanResultsTableAdapter1
             // 
@@ -188,41 +189,45 @@
             this.fileGuardDataSetBindingSource.DataSource = this.fileGuardDataSet;
             this.fileGuardDataSetBindingSource.Position = 0;
             // 
-            // dataGridViewTextBoxColumn4
-            // 
-            this.dataGridViewTextBoxColumn4.DataPropertyName = "Vulnerability";
-            this.dataGridViewTextBoxColumn4.HeaderText = "Vulnerability";
-            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            // 
-            // dataGridViewTextBoxColumn3
-            // 
-            this.dataGridViewTextBoxColumn3.DataPropertyName = "ScanTime";
-            this.dataGridViewTextBoxColumn3.HeaderText = "ScanTime";
-            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.DataPropertyName = "FilePath";
-            this.dataGridViewTextBoxColumn2.HeaderText = "FilePath";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.DataPropertyName = "FileName";
-            this.dataGridViewTextBoxColumn1.HeaderText = "FileName";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            // 
             // idDataGridViewTextBoxColumn
             // 
             this.idDataGridViewTextBoxColumn.DataPropertyName = "Id";
-            this.idDataGridViewTextBoxColumn.HeaderText = "Id";
+            this.idDataGridViewTextBoxColumn.HeaderText = "Индефикатор записи";
             this.idDataGridViewTextBoxColumn.Name = "idDataGridViewTextBoxColumn";
             this.idDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "FileName";
+            this.dataGridViewTextBoxColumn1.HeaderText = "Полное имя файла";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn2.DataPropertyName = "FilePath";
+            this.dataGridViewTextBoxColumn2.HeaderText = "Путь файла";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn3.DataPropertyName = "ScanTime";
+            this.dataGridViewTextBoxColumn3.HeaderText = "Время сканирования";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            this.dataGridViewTextBoxColumn4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn4.DataPropertyName = "Vulnerability";
+            this.dataGridViewTextBoxColumn4.HeaderText = "Уязвимость";
+            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
             // 
             // FunctionForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.BackColor = System.Drawing.Color.Green;
+            this.BackColor = System.Drawing.Color.Teal;
             this.ClientSize = new System.Drawing.Size(788, 314);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -233,11 +238,11 @@
             this.Controls.Add(this.Reasercher);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.OpenFile);
-            this.ForeColor = System.Drawing.Color.DarkOliveGreen;
+            this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FunctionForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "FunctionForm";
+            this.Text = "Главная страница";
             this.TransparencyKey = System.Drawing.SystemColors.ButtonFace;
             this.Load += new System.EventHandler(this.FunctionForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
